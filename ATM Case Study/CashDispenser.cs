@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ATM_Case_Study
+﻿namespace ATM_Case_Study
 {
-    class CashDispenser
+    public class CashDispenser
     {
-        int billCount;//ATM'den çekilebilecek max miktar.
-        const int INITIAL_COUNT = 1000;
+        private const int INITIAL_COUNT = 500; // the default initial number of bills in the cash dispenser
+        private int _billCount; // number of $20 bills remaining
 
-        public CashDispenser() { billCount = INITIAL_COUNT; }
-        public void DispenseCash(decimal amount) { billCount -= (int)amount; }
-        //Çekilmek istenen değerin max değerden büyük olup olmaması sonucuna göre true yada false döndür. 
-        public bool isSufficiantCashAvailable(decimal amount) { return (billCount >= (int)amount) ? true : false; }      
+        public CashDispenser()
+        {
+            _billCount = INITIAL_COUNT;
+        }
+
+        public void DispenseCash(decimal amount) => _billCount -= (int)(amount / 20);
+        public bool IsSufficiantCashAvailable(decimal amount) => _billCount >= (int)(amount / 20);
     }
 }

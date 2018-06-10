@@ -1,114 +1,166 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
+﻿using static System.Console;
 using static System.Threading.Thread;
+
 namespace ATM_Case_Study
 {
-    class ATM
+    /// <summary>
+    /// constants corresponding to main menu options
+    /// </summary>
+    internal enum MenuOption
     {
-        BankDatabase bankDatabase;
-        CashDispenser cashDispenser;
-        int currentAccountNumber;
-        DepositSlot depositSlot;
-        Keypad keypad;
-        Screen screen;
-        bool userAuthenticated;
+        BalanceInquiry = 1,
+        Withdrawal = 2,
+        Deposit = 3,
+        Exit = 4
+    };
 
+    public class ATM
+    {
+        /// <summary>
+        /// account information database
+        /// </summary>
+        private BankDatabase _bankDatabase;
+        /// <summary>
+        /// ATM's cash dispenser
+        /// </summary>
+        private CashDispenser _cashDispenser;
+        /// <summary>
+        /// current user's account number
+        /// </summary>
+        private int _currentAccountNumber;
+        /// <summary>
+        /// ATM's deposit slot
+        /// </summary>
+        private DepositSlot _depositSlot;
+        /// <summary>
+        /// ATM's keypad
+        /// </summary>
+        private Keypad _keypad;
+        /// <summary>
+        /// ATM's screen
+        /// </summary>
+        private Screen _screen;
+        /// <summary>
+        /// whether user is authenticated
+        /// </summary>
+        private bool _userAuthenticated;
+
+        /// <summary>
+        /// no-argument ATM constructor initializes instance variables
+        /// </summary>
         public ATM()
         {
-            userAuthenticated = false;
-            currentAccountNumber = 0;
-            depositSlot = new DepositSlot();
-            keypad = new Keypad();
-            screen = new Screen();
-            cashDispenser = new CashDispenser();
-            bankDatabase = new BankDatabase();
+            _userAuthenticated = false;
+            _currentAccountNumber = 0;
+            _depositSlot = new DepositSlot();
+            _keypad = new Keypad();
+            _screen = new Screen();
+            _cashDispenser = new CashDispenser();
+            _bankDatabase = new BankDatabase();
         }
-        void AuthenticateUser()
+
+        private void AuthenticateUser()
         {
             Clear();
-            screen.DisplayMessageLine("Please enter your account number: ");
-            int accountNumber = keypad.GetInput();
-            screen.DisplayMessageLine("Enter your PIN: ");
-            int pinCode = keypad.GetInput();
+            _screen.DisplayMessageLine("Please enter your account number: ");
+            int accountNumber = _keypad.GetInput();
+            _screen.DisplayMessageLine("Enter your PIN: ");
+            int pinCode = _keypad.GetInput();
 
-            userAuthenticated = bankDatabase.AuthenticateUser(accountNumber, pinCode);
-            if (userAuthenticated) currentAccountNumber = accountNumber; // Kimlik doğrulaması doğru ise hesaba erişim sağla.
-            else screen.DisplayMessageLine("Invalid account number or PIN. Please try again. ");//Kimlik doğrulaması yanlış ise tekrar dene.
-            Sleep(2000);
+            _userAuthenticated = _bankDatabase.AuthenticateUser(accountNumber, pinCode);
+            if (_userAuthenticated)
+                _currentAccountNumber = accountNumber; // Provide access to account if authentication is correct.
+            else
+                _screen.DisplayMessageLine("Invalid account number or PIN. Please try again. "); // Try again if the authentication is incorrect.
+
+            Sleep(3000);
         }
-        Transaction CreateTransaction(MenuOption type)
+
+        private Transaction CreateTransaction(MenuOption type)
         {
             Transaction temp = null;
-            switch(type)
+
+            switch (type)
             {
-                case MenuOption.BALANCE_INQUIRY:
-                   temp = new BalanceInquiry(currentAccountNumber, screen, bankDatabase);
+                case MenuOption.BalanceInquiry:
+                    temp = new BalanceInquiry(_currentAccountNumber, _screen, _bankDatabase);
                     break;
-                case MenuOption.WITHDRAWAL:
-                    temp = new Withdrawal(currentAccountNumber, screen, bankDatabase, keypad, cashDispenser);
+                case MenuOption.Withdrawal:
+                    temp = new Withdrawal(_currentAccountNumber, _screen, _bankDatabase, _keypad, _cashDispenser);
                     break;
-                case MenuOption.DEPOSIT:
-                    temp = new Deposit(currentAccountNumber, screen, bankDatabase, keypad, depositSlot);
+                case MenuOption.Deposit:
+                    temp = new Deposit(_currentAccountNumber, _screen, _bankDatabase, _keypad, _depositSlot);
                     break;
             }
+
             return temp;
         }
-        void PerformTransactions() 
+
+        private void PerformTransactions()
         {
+            // local variable to store transaction currently being processed
             Transaction currentTransaction = null;
-            bool isUserExited = false;
-           
-            while(!isUserExited)
+
+            bool isUserExited = false; // user has not chosen to exit
+
+            // loop while user has not chosen option to exit system
+            while (!isUserExited)
             {
                 Clear();
-                screen.DisplayMessage("MAIN MENU: "
-                                    + "\n\n1 - View my balance"
-                                    + "\n2 - Withdraw cash"
-                                    + "\n3 - Deposit funds"
-                                    + "\n4 - Exit"
-                                    + "\nPlease enter a choise: ");
 
-                MenuOption menuSelect = (MenuOption)keypad.GetInput();
-  
-                switch(menuSelect)
+                MenuOption menuSelect = DisplayMainMenu();
+
+                switch (menuSelect)
                 {
-                    case MenuOption.BALANCE_INQUIRY:
-                    case MenuOption.WITHDRAWAL:
-                    case MenuOption.DEPOSIT:
+                    case MenuOption.BalanceInquiry:
+                    case MenuOption.Withdrawal:
+                    case MenuOption.Deposit:
                         currentTransaction = CreateTransaction(menuSelect);
                         currentTransaction.Execute();
                         break;
-                    case MenuOption.EXIT_ATM:
-                        screen.DisplayMessageLine("Exitting the system...");
+                    case MenuOption.Exit:
+                        _screen.DisplayMessageLine("Exiting the system...");
                         isUserExited = true;
-                        Sleep(2000);
+                        Sleep(3000);
                         Clear();
                         break;
-                        //GetInput methodundan bağımsız olarak, enum değerlerinden farklı bir değer girilirse tekrar dene.
-                    default: screen.DisplayMessageLine("You did not enter a valid selection. Try again."); break;
+                    // Try again if you enter a value other than the enum values, regardless of the GetInput method.
+                    default: _screen.DisplayMessageLine("You did not enter a valid selection. Try again.");
+                        break;
                 }
             }
         }
+
+        private MenuOption DisplayMainMenu()
+        {
+            _screen.DisplayMessage("MAIN MENU: " +
+                                    "\n\n1 - View my balance" +
+                                    "\n2 - Withdraw cash" +
+                                    "\n3 - Deposit funds" +
+                                    "\n4 - Exit" +
+                                    "\nPlease enter a choise: ");
+
+            MenuOption menuSelect = (MenuOption)_keypad.GetInput();
+            return menuSelect;
+        }
+
         public void Run()
         {
-            while(true)
+            // welcome and authenticate user; perform transactions
+            while (true)
             {
-                while(!userAuthenticated)//Kimlik doğrulaması doğru olana kadar döngü içinde işlem gerçekleştir.
+                while (!_userAuthenticated) // loop while user is not yet authenticated
                 {
-                    screen.DisplayMessageLine("Welcome!");
+                    _screen.DisplayMessageLine("Welcome!");
                     AuthenticateUser();
                 }
-                PerformTransactions();
-                userAuthenticated = false;
-                currentAccountNumber = 0;
-                screen.DisplayMessageLine("Thank you! Goodbye!");
-                Sleep(1000);
+
+                PerformTransactions(); // user is now authenticated
+                _userAuthenticated = false;
+                _currentAccountNumber = 0;
+                _screen.DisplayMessageLine("Thank you! Goodbye!");
+                Sleep(2000);
             }
         }
     }
-    enum MenuOption { BALANCE_INQUIRY = 1, WITHDRAWAL = 2, DEPOSIT = 3, EXIT_ATM = 4};
 }

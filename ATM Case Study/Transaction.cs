@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ATM_Case_Study
+﻿namespace ATM_Case_Study
 {
-    abstract class Transaction
+    public abstract class Transaction
     {
-        public int AccountNumber { get; set; }
-        public BankDatabase bankDatabase { get; set; }
-        public Screen screen { get; set; }
+        public int AccountNumber { get; private set; }
+        public BankDatabase BankDatabase { get; private set; }
+        public Screen Screen { get; private set; }
         
-        public Transaction(int AccountNumber, BankDatabase bankDatabase, Screen screen)
+        public Transaction(int userAccountNumber, BankDatabase atmBankDatabase, Screen atmScreen)
         {
-            this.AccountNumber = AccountNumber;
-            this.bankDatabase = bankDatabase;
-            this.screen = screen;
+            this.AccountNumber = userAccountNumber;
+            this.BankDatabase = atmBankDatabase;
+            this.Screen = atmScreen;
         }
+
         public abstract void Execute();
     }
 }

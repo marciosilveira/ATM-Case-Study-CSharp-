@@ -1,98 +1,101 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
+﻿using static System.Console;
 using static System.Threading.Thread;
+
 namespace ATM_Case_Study
 {
-    class Withdrawal : Transaction
+    public class Withdrawal : Transaction
     {
-        decimal amount;
-        Keypad keypad;
-        CashDispenser cashDispenser;
+        private decimal _amount;
+        private Keypad _keypad;
+        private CashDispenser _cashDispenser;
 
-        const int CANCELED = 7; // Kullanıcının çekmek istediği para miktarını kendisinin belirlemesi için bir seçenek daha eklendi.(Ek özellik)
+        private const int CANCELED = 6;
 
-        public Withdrawal(int userAccount, Screen screen, 
-              BankDatabase bankDatabase, Keypad keypad, CashDispenser cashDispenser) :base(userAccount, bankDatabase, screen)
+        public Withdrawal(int userAccount, Screen atmScreen,
+              BankDatabase atmBankDatabase, Keypad atmKeypad, CashDispenser atmCashDispenser)
+            : base(userAccount, atmBankDatabase, atmScreen)
         {
-            this.keypad = keypad;
-            this.cashDispenser = cashDispenser;
+            _keypad = atmKeypad;
+            _cashDispenser = atmCashDispenser;
         }
-        int displayMenu()
+
+        private int DisplayMenuOfAmounts()
         {
             int userChoice = 0;
-            Screen screen = this.screen;
 
-            int[] amounts = {0, 20, 40, 60, 100, 200 };
-            while(userChoice == 0)
+            int[] amounts = { 0, 20, 40, 60, 100, 200 };
+
+            while (userChoice == 0)
             {
                 Clear();
-                screen.DisplayMessageLine("WITHDRAWAL MENU: " 
-                                    + "\n\n1 - 20" 
-                                    + "\n2 - 40" 
-                                    + "\n3 - 60" 
-                                    + "\n4 - 100" 
-                                    + "\n5 - 200"
-                                    + "\n6 - Insert an amount"
-                                    + "\n7 - Cancel transaction"
-                                    + "\n\nChoose a withdrawal amount: ");
+                Screen.DisplayMessageLine("\nWITHDRAWAL MENU: ");
+                Screen.DisplayMessageLine("1 - $20");
+                Screen.DisplayMessageLine("2 - $40");
+                Screen.DisplayMessageLine("3 - $60");
+                Screen.DisplayMessageLine("4 - $100");
+                Screen.DisplayMessageLine("5 - $200");
+                Screen.DisplayMessageLine("6 - Cancel transaction");
+                Screen.DisplayMessage("\nChoose a withdrawal amount: ");
 
-                int choise = keypad.GetInput();
-                switch( choise )
+                int input = _keypad.GetInput();
+
+                switch (input)
                 {
-                    case 1:
-                    case 2:
-                    case 3:
+                    case 1: // if the user chose a withdrawal amount 
+                    case 2: // (i.e., chose option 1, 2, 3, 4 or 5), return the
+                    case 3: // corresponding amount from amounts array
                     case 4:
-                    case 5: userChoice = amounts[choise];break; //1'den 5'e kadarki değerler kadar hesaptan para çekilir.
-                    case 6:
-                        screen.DisplayMessageLine("How much money do you want to withdraw?: ");//Girilen değer kadar hesaptan para çekilir.
-                        userChoice = keypad.GetInput();
+                    case 5:
+                        userChoice = amounts[input]; // save user's choice
                         break;
-                    case CANCELED: userChoice = CANCELED; break;
-                    default: screen.DisplayMessageLine("Invalid selection. Try again. ");
-                        Sleep(2000); break;
+                    case CANCELED: // the user chose to cancel
+                        userChoice = CANCELED; // save user's choice
+                        break;
+                    default: // the user did not enter a value from 1-6
+                        Screen.DisplayMessageLine("\nInvalid selection. Try again.");
+                        Sleep(2000);
+                        break;
                 }
             }
+
             return userChoice;
         }
+
         public override void Execute()
         {
             bool isCashDispensed = false;
             decimal availableBalance;
 
-            BankDatabase bankDatabase = base.bankDatabase;
-            Screen screen = base.screen;
+            BankDatabase bankDatabase = base.BankDatabase;
 
             do
             {
-                amount = (decimal)displayMenu();//Method integer değer döndürdüğü için type cast yapıldı.
+                _amount = (decimal)DisplayMenuOfAmounts();
 
-                if (amount != CANCELED)
+                if (_amount != CANCELED)
                 {
                     availableBalance = bankDatabase.getAvailableBalance(AccountNumber);
-                    if (amount <= availableBalance)
+                    if (_amount <= availableBalance)
                     {
-                        if (cashDispenser.isSufficiantCashAvailable(amount))
+                        if (_cashDispenser.IsSufficiantCashAvailable(_amount))
                         {
-                            bankDatabase.Debit(AccountNumber, amount);
-                            cashDispenser.DispenseCash(amount);
+                            bankDatabase.Debit(AccountNumber, _amount);
+                            _cashDispenser.DispenseCash(_amount);
                             isCashDispensed = true;
 
-                            screen.DisplayMessageLine("\nYour cash has been dispensed. Please take your cash now.");
+                            Screen.DisplayMessageLine("\nYour cash has been dispensed. Please take your cash now.");
                         }
-                        else screen.DisplayMessageLine("\nInsufficient cash available in the ATM.\n\nPlease choose a smaller amount.");
+                        else
+                            Screen.DisplayMessageLine("\nInsufficient cash available in the ATM.\n\nPlease choose a smaller amount.");
                     }
-                    else screen.DisplayMessage("\n Insufficient funds in your account.\n\n Please choose a smaller amount.");
-                    Sleep(2000);
+                    else
+                        Screen.DisplayMessage("\nInsufficient funds in your account.\n\nPlease choose a smaller amount.");
+                    Sleep(3000);
                 }
                 else
                 {
-                    screen.DisplayMessageLine("\nCancelling transaction...");
-                    Sleep(2000);
+                    Screen.DisplayMessageLine("\nCancelling transaction...");
+                    Sleep(3000);
                     return;
                 }
             } while (!isCashDispensed);

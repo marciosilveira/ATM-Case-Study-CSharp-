@@ -1,14 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Console;
+﻿using static System.Console;
+
 namespace ATM_Case_Study
 {
-    class Screen
+    public class Screen
     {
-        public void DisplayMessage(string p) { Write(p); }
-        public void DisplayMessageLine(string p) { WriteLine(p); }
+        public void DisplayMessage(string message)
+        {
+            Write(message);
+        }
+
+        public void DisplayMessageLine(string message)
+        {
+            WriteLine(message);
+        }
+
+        public void DisplayDollarAmount(decimal amount)
+        {
+            Write(amount.ToString("$#.00"));
+        }
     }
 }
