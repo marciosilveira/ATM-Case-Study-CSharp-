@@ -1,20 +1,11 @@
-﻿using static System.Console;
+﻿using ATM.Application.Enumerator;
+using ATM.Domain;
+using static System.Console;
 using static System.Threading.Thread;
 
-namespace ATM_Case_Study
+namespace ATM.Application
 {
-    /// <summary>
-    /// constants corresponding to main menu options
-    /// </summary>
-    internal enum MenuOption
-    {
-        BalanceInquiry = 1,
-        Withdrawal = 2,
-        Deposit = 3,
-        Exit = 4
-    };
-
-    public class ATM
+    public class ATMMain
     {
         /// <summary>
         /// account information database
@@ -45,10 +36,13 @@ namespace ATM_Case_Study
         /// </summary>
         private bool _userAuthenticated;
 
+        private WithdrawalService _withdrawalService;
+        private DepositService _depositService;
+
         /// <summary>
         /// no-argument ATM constructor initializes instance variables
         /// </summary>
-        public ATM()
+        public ATMMain()
         {
             _userAuthenticated = false;
             _currentAccountNumber = 0;
@@ -57,6 +51,8 @@ namespace ATM_Case_Study
             _screen = new Screen();
             _cashDispenser = new CashDispenser();
             _bankDatabase = new BankDatabase();
+            _withdrawalService = new WithdrawalService(_bankDatabase, _cashDispenser);
+            _depositService = new DepositService(_bankDatabase, _depositSlot);
         }
 
         private void AuthenticateUser()
@@ -86,10 +82,10 @@ namespace ATM_Case_Study
                     temp = new BalanceInquiry(_currentAccountNumber, _screen, _bankDatabase);
                     break;
                 case MenuOption.Withdrawal:
-                    temp = new Withdrawal(_currentAccountNumber, _screen, _bankDatabase, _keypad, _cashDispenser);
+                    temp = new Withdrawal(_currentAccountNumber, _screen, _keypad, _withdrawalService);
                     break;
                 case MenuOption.Deposit:
-                    temp = new Deposit(_currentAccountNumber, _screen, _bankDatabase, _keypad, _depositSlot);
+                    temp = new Deposit(_currentAccountNumber, _screen, _keypad, _depositService);
                     break;
             }
 
@@ -99,7 +95,7 @@ namespace ATM_Case_Study
         private void PerformTransactions()
         {
             // local variable to store transaction currently being processed
-            Transaction currentTransaction = null;
+            //Transaction currentTransaction = null;
 
             bool isUserExited = false; // user has not chosen to exit
 
@@ -115,7 +111,7 @@ namespace ATM_Case_Study
                     case MenuOption.BalanceInquiry:
                     case MenuOption.Withdrawal:
                     case MenuOption.Deposit:
-                        currentTransaction = CreateTransaction(menuSelect);
+                        var currentTransaction = CreateTransaction(menuSelect);
                         currentTransaction.Execute();
                         break;
                     case MenuOption.Exit:
@@ -125,7 +121,8 @@ namespace ATM_Case_Study
                         Clear();
                         break;
                     // Try again if you enter a value other than the enum values, regardless of the GetInput method.
-                    default: _screen.DisplayMessageLine("You did not enter a valid selection. Try again.");
+                    default:
+                        _screen.DisplayMessageLine("You did not enter a valid selection. Try again.");
                         break;
                 }
             }

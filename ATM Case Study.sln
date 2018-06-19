@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATM Case Study", "ATM Case Study\ATM Case Study.csproj", "{457433AA-184A-4AB4-870B-689996A4732A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATM.Application", "ATM.Application\ATM.Application.csproj", "{ADF8A8DF-83BF-49F1-A850-D353F75698BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATM.Domain", "ATM.Domain\ATM.Domain.csproj", "{B10CF9D7-6468-4FD7-956C-E39FDEDA123B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATM.Dto", "ATM.Dto\ATM.Dto.csproj", "{15FCE9FD-9C76-4D18-A310-548717B541F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +21,23 @@ Global
 		{457433AA-184A-4AB4-870B-689996A4732A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{457433AA-184A-4AB4-870B-689996A4732A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{457433AA-184A-4AB4-870B-689996A4732A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADF8A8DF-83BF-49F1-A850-D353F75698BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADF8A8DF-83BF-49F1-A850-D353F75698BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADF8A8DF-83BF-49F1-A850-D353F75698BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADF8A8DF-83BF-49F1-A850-D353F75698BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B10CF9D7-6468-4FD7-956C-E39FDEDA123B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B10CF9D7-6468-4FD7-956C-E39FDEDA123B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B10CF9D7-6468-4FD7-956C-E39FDEDA123B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B10CF9D7-6468-4FD7-956C-E39FDEDA123B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15FCE9FD-9C76-4D18-A310-548717B541F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15FCE9FD-9C76-4D18-A310-548717B541F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15FCE9FD-9C76-4D18-A310-548717B541F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15FCE9FD-9C76-4D18-A310-548717B541F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D5885E5-6708-40C5-BEE2-19D35F62F9A7}
 	EndGlobalSection
 EndGlobal

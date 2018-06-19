@@ -1,10 +1,12 @@
-﻿namespace ATM_Case_Study
+﻿using ATM.Application;
+
+namespace ATM.Case.Study
 {
     class Program
     {
         static void Main(string[] args)
         {
-            ATM atm = new ATM();
+            var atm = new ATMMain();
             atm.Run();
         }
     }

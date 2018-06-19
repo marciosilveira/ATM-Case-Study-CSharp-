@@ -1,6 +1,6 @@
 ﻿using static System.Console;
 
-namespace ATM_Case_Study
+namespace ATM.Application
 {
     public class Screen
     {

@@ -1,4 +1,4 @@
-﻿namespace ATM_Case_Study
+﻿namespace ATM.Domain
 {
     public class DepositSlot
     {

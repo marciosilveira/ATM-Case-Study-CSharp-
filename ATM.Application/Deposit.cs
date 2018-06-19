@@ -1,43 +1,42 @@
-﻿using static System.Threading.Thread;
+﻿using ATM.Domain;
+using ATM.Domain.Enumerator;
+using static System.Threading.Thread;
 
-namespace ATM_Case_Study
+namespace ATM.Application
 {
     public class Deposit : Transaction
     {
-        private decimal _amount;
         private Keypad _keypad;
-        private DepositSlot _depositSlot;
+        private DepositService _depositService;
         private const int CANCELED = 0;
 
         public Deposit(int userAccountNumber, Screen atmScreen,
-            BankDatabase atmBankDatabase, Keypad atmKeypad, DepositSlot atmDepositSlot)
-            : base(userAccountNumber, atmBankDatabase, atmScreen)
+            Keypad atmKeypad, DepositService depositService)
+            : base(userAccountNumber, null, atmScreen)
         {
             _keypad = atmKeypad;
-            _depositSlot = atmDepositSlot;
+            _depositService = depositService;
         }
 
         public override void Execute()
         {
-            _amount = PromptForDepositAmount();
+            var _amount = PromptForDepositAmount();
 
-            if (_amount != CANCELED) 
+            if (_amount != CANCELED)
             {
                 Screen.DisplayMessage("Please insert a deposit envelope containing ");
                 Screen.DisplayDollarAmount(_amount);
                 Screen.DisplayMessageLine(" in the deposit slot.");
 
-                bool envelopeReceived = _depositSlot.IsEnvelopeReceived;
+                var depositCrediReturn = _depositService.Credit(base.AccountNumber, _amount);
 
-                if (envelopeReceived)
+                if (depositCrediReturn == DepositDebitReturn.Success)
                 {
                     Screen.DisplayMessageLine(
                         "Your envelope has been received.\n" +
                         "The money just deposited will not be available " +
                         "until we \nverify the amount of any " +
                         "enclosed cash, and any enclosed checks clear.");
-
-                    BankDatabase.Credit(AccountNumber, _amount);
                 }
                 else
                     Screen.DisplayMessageLine("You did not insert an envelope, so the ATM has canceled your transaction.");

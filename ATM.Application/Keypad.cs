@@ -1,7 +1,6 @@
-﻿using System;
-using static System.Console;
+﻿using static System.Console;
 
-namespace ATM_Case_Study
+namespace ATM.Application
 {
     public class Keypad
     {

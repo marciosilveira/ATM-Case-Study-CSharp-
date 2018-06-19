@@ -1,22 +1,36 @@
-﻿using static System.Console;
+﻿using ATM.Domain;
+using ATM.Domain.Enumerator;
+using System.Collections.Generic;
+using static System.Console;
 using static System.Threading.Thread;
 
-namespace ATM_Case_Study
+namespace ATM.Application
 {
     public class Withdrawal : Transaction
     {
-        private decimal _amount;
         private Keypad _keypad;
-        private CashDispenser _cashDispenser;
+        private WithdrawalService _withdrawalService;
+        private Dictionary<WithdrawalDebitReturn, string> _withdrawalDebitMessage;
 
         private const int CANCELED = 6;
 
         public Withdrawal(int userAccount, Screen atmScreen,
-              BankDatabase atmBankDatabase, Keypad atmKeypad, CashDispenser atmCashDispenser)
-            : base(userAccount, atmBankDatabase, atmScreen)
+              Keypad atmKeypad, WithdrawalService withdrawalService)
+            : base(userAccount, null, atmScreen)
         {
             _keypad = atmKeypad;
-            _cashDispenser = atmCashDispenser;
+            _withdrawalService = withdrawalService;
+            InitilizeResource();
+        }
+
+        private void InitilizeResource()
+        {
+            _withdrawalDebitMessage = new Dictionary<WithdrawalDebitReturn, string>()
+            {
+                { WithdrawalDebitReturn.Success, "Your cash has been dispensed. Please take your cash now." },
+                { WithdrawalDebitReturn.InsufficientFunds, "Insufficient funds in your account.\n\nPlease choose a smaller amount." },
+                { WithdrawalDebitReturn.InsufficientCash, "Insufficient cash available in the ATM.\n\nPlease choose a smaller amount." }
+            };
         }
 
         private int DisplayMenuOfAmounts()
@@ -64,41 +78,27 @@ namespace ATM_Case_Study
         public override void Execute()
         {
             bool isCashDispensed = false;
-            decimal availableBalance;
-
-            BankDatabase bankDatabase = base.BankDatabase;
 
             do
             {
-                _amount = (decimal)DisplayMenuOfAmounts();
+                var _amount = (decimal)DisplayMenuOfAmounts();
 
-                if (_amount != CANCELED)
-                {
-                    availableBalance = bankDatabase.getAvailableBalance(AccountNumber);
-                    if (_amount <= availableBalance)
-                    {
-                        if (_cashDispenser.IsSufficiantCashAvailable(_amount))
-                        {
-                            bankDatabase.Debit(AccountNumber, _amount);
-                            _cashDispenser.DispenseCash(_amount);
-                            isCashDispensed = true;
-
-                            Screen.DisplayMessageLine("\nYour cash has been dispensed. Please take your cash now.");
-                        }
-                        else
-                            Screen.DisplayMessageLine("\nInsufficient cash available in the ATM.\n\nPlease choose a smaller amount.");
-                    }
-                    else
-                        Screen.DisplayMessage("\nInsufficient funds in your account.\n\nPlease choose a smaller amount.");
-                    Sleep(3000);
-                }
-                else
+                if (_amount == CANCELED)
                 {
                     Screen.DisplayMessageLine("\nCancelling transaction...");
                     Sleep(3000);
                     return;
                 }
+
+                var withdrawalDebitReturn = _withdrawalService.Debit(base.AccountNumber, _amount);
+                isCashDispensed = IsCashDispensed(withdrawalDebitReturn);
             } while (!isCashDispensed);
+        }
+
+        private bool IsCashDispensed(WithdrawalDebitReturn withdrawalDebitReturn)
+        {
+            Screen.DisplayMessageLine(_withdrawalDebitMessage[withdrawalDebitReturn]);
+            return withdrawalDebitReturn == WithdrawalDebitReturn.Success;
         }
     }
 }

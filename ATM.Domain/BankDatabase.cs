@@ -1,4 +1,6 @@
-﻿namespace ATM_Case_Study
+﻿using ATM.Dto;
+
+namespace ATM.Domain
 {
     public class BankDatabase
     {
