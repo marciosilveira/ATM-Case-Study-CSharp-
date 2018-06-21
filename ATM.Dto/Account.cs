@@ -2,15 +2,15 @@
 {
     public class Account
     {
+        private int _pin;
         public int AccountNumber { get; private set; }
         public decimal AvailableBalance { get; private set; }
-        private int Pin { get; set; }
         public decimal TotalBalance { get; private set; }
 
         public Account(int accountNumber, int pin, decimal totalBalance, decimal availableBalance)
         {
             AccountNumber = accountNumber;
-            Pin = pin;
+            _pin = pin;
             TotalBalance = totalBalance;
             AvailableBalance = availableBalance;
         }
@@ -23,6 +23,6 @@
             TotalBalance -= amount;
         }
 
-        public bool ValidatePin(int userPin) => userPin == Pin;
+        public bool ValidatePin(int userPin) => userPin == _pin;
     }
 }

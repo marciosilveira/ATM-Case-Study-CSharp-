@@ -16,7 +16,7 @@ namespace ATM.Application
 
         public Withdrawal(int userAccount, Screen atmScreen,
               Keypad atmKeypad, WithdrawalService withdrawalService)
-            : base(userAccount, null, atmScreen)
+            : base(userAccount, atmScreen)
         {
             _keypad = atmKeypad;
             _withdrawalService = withdrawalService;

@@ -1,13 +1,14 @@
 ﻿using ATM.Domain.Enumerator;
+using ATM.Domain.Interfaces;
 
 namespace ATM.Domain
 {
     public class DepositService
     {
-        BankDatabase _bankDatabase;
+        IBankDatabase _bankDatabase;
         DepositSlot _depositSlot;
 
-        public DepositService(BankDatabase bankDatabase, DepositSlot depositSlot)
+        public DepositService(IBankDatabase bankDatabase, DepositSlot depositSlot)
         {
             _bankDatabase = bankDatabase;
             _depositSlot = depositSlot;

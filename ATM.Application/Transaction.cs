@@ -1,17 +1,13 @@
-﻿using ATM.Domain;
-
-namespace ATM.Application
+﻿namespace ATM.Application
 {
     public abstract class Transaction
     {
         public int AccountNumber { get; private set; }
-        public BankDatabase BankDatabase { get; private set; }
         public Screen Screen { get; private set; }
 
-        public Transaction(int userAccountNumber, BankDatabase atmBankDatabase, Screen atmScreen)
+        public Transaction(int userAccountNumber, Screen atmScreen)
         {
             this.AccountNumber = userAccountNumber;
-            this.BankDatabase = atmBankDatabase;
             this.Screen = atmScreen;
         }
 

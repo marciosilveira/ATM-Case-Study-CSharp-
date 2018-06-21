@@ -1,17 +1,22 @@
-﻿using ATM.Domain;
+﻿using ATM.Domain.Interfaces;
 using static System.Threading.Thread;
 
 namespace ATM.Application
 {
     public class BalanceInquiry : Transaction
     {
-        public BalanceInquiry(int userAccountNumber, Screen atmScreen, BankDatabase atmBankDatabase)
-            : base(userAccountNumber, atmBankDatabase, atmScreen) { }
+        private IBankDatabase _bankDatabase;
+
+        public BalanceInquiry(int userAccountNumber, Screen atmScreen, IBankDatabase bankDatabase)
+            : base(userAccountNumber, atmScreen)
+        {
+            _bankDatabase = bankDatabase;
+        }
 
         public override void Execute()
         {
-            var availableBalance = base.BankDatabase.getAvailableBalance(AccountNumber);
-            var totalBalance = base.BankDatabase.getTotalBalance(AccountNumber);
+            var availableBalance = _bankDatabase.GetAvailableBalance(AccountNumber);
+            var totalBalance = _bankDatabase.GetTotalBalance(AccountNumber);
 
             base.Screen.DisplayMessageLine("\nBalance Information:");
             base.Screen.DisplayMessage(" - Available balance: ");

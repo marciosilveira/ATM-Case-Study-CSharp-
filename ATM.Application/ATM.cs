@@ -1,5 +1,6 @@
 ﻿using ATM.Application.Enumerator;
 using ATM.Domain;
+using ATM.Domain.Interfaces;
 using static System.Console;
 using static System.Threading.Thread;
 
@@ -10,11 +11,11 @@ namespace ATM.Application
         /// <summary>
         /// account information database
         /// </summary>
-        private BankDatabase _bankDatabase;
+        private IBankDatabase _bankDatabase;
         /// <summary>
         /// ATM's cash dispenser
         /// </summary>
-        private CashDispenser _cashDispenser;
+        private ICashDispenser _cashDispenser;
         /// <summary>
         /// current user's account number
         /// </summary>
@@ -35,8 +36,13 @@ namespace ATM.Application
         /// whether user is authenticated
         /// </summary>
         private bool _userAuthenticated;
-
+        /// <summary>
+        /// 
+        /// </summary>
         private WithdrawalService _withdrawalService;
+        /// <summary>
+        /// 
+        /// </summary>
         private DepositService _depositService;
 
         /// <summary>

@@ -1,8 +1,10 @@
-﻿using ATM.Dto;
+﻿using ATM.Domain.Interfaces;
+using ATM.Dto;
+using System.Linq;
 
 namespace ATM.Domain
 {
-    public class BankDatabase
+    public class BankDatabase : IBankDatabase
     {
         private Account[] _accounts;
 
@@ -18,17 +20,7 @@ namespace ATM.Domain
         /// </summary>
         /// <param name="accountNumber"></param>
         /// <returns></returns>
-        private Account GetAccount(int accountNumber)
-        {
-            foreach (Account currentAccount in _accounts)
-            {
-                // return current account if match found
-                if (currentAccount.AccountNumber == accountNumber)
-                    return currentAccount;
-            }
-
-            return null; // if no matching account was found, return null
-        }
+        private Account GetAccount(int accountNumber) => _accounts.FirstOrDefault(o => o.AccountNumber == accountNumber);
 
         /// <summary>
         /// determine whether user-specified account number and PIN match
@@ -46,7 +38,7 @@ namespace ATM.Domain
 
         public void Credit(int userAccountNumber, decimal amount) => GetAccount(userAccountNumber).Credit(amount);
         public void Debit(int userAccountNumber, decimal amount) => GetAccount(userAccountNumber).Debit(amount);
-        public decimal getAvailableBalance(int userAccountNumber) => GetAccount(userAccountNumber).AvailableBalance;
-        public decimal getTotalBalance(int userAccountNumber) => GetAccount(userAccountNumber).TotalBalance;
+        public decimal GetAvailableBalance(int userAccountNumber) => GetAccount(userAccountNumber).AvailableBalance;
+        public decimal GetTotalBalance(int userAccountNumber) => GetAccount(userAccountNumber).TotalBalance;
     }
 }

@@ -1,13 +1,14 @@
 ﻿using ATM.Domain.Enumerator;
+using ATM.Domain.Interfaces;
 
 namespace ATM.Domain
 {
     public class WithdrawalService
     {
-        BankDatabase _bankDatabase;
-        CashDispenser _cashDispenser;
+        IBankDatabase _bankDatabase;
+        ICashDispenser _cashDispenser;
 
-        public WithdrawalService(BankDatabase bankDatabase, CashDispenser cashDispenser)
+        public WithdrawalService(IBankDatabase bankDatabase, ICashDispenser cashDispenser)
         {
             _bankDatabase = bankDatabase;
             _cashDispenser = cashDispenser;
@@ -15,7 +16,7 @@ namespace ATM.Domain
 
         public WithdrawalDebitReturn Debit(int accountNumber, decimal amount)
         {
-            var availableBalance = _bankDatabase.getAvailableBalance(accountNumber);
+            var availableBalance = _bankDatabase.GetAvailableBalance(accountNumber);
             if (amount > availableBalance)
                 return WithdrawalDebitReturn.InsufficientFunds;
 

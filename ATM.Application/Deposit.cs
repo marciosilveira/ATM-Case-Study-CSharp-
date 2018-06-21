@@ -12,7 +12,7 @@ namespace ATM.Application
 
         public Deposit(int userAccountNumber, Screen atmScreen,
             Keypad atmKeypad, DepositService depositService)
-            : base(userAccountNumber, null, atmScreen)
+            : base(userAccountNumber, atmScreen)
         {
             _keypad = atmKeypad;
             _depositService = depositService;

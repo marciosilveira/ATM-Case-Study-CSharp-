@@ -1,6 +1,8 @@
-﻿namespace ATM.Domain
+﻿using ATM.Domain.Interfaces;
+
+namespace ATM.Domain
 {
-    public class CashDispenser
+    public class CashDispenser : ICashDispenser
     {
         private const int INITIAL_COUNT = 500; // the default initial number of bills in the cash dispenser
         private int _billCount; // number of $20 bills remaining
